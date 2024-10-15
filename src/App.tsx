@@ -39,7 +39,7 @@ function App() {
     } else {
       setFeedback(`Oops! The correct answer was ${correctAnswer}.`);
     }
-    setTimeout(generateNumbers, 2000);
+    setTimeout(generateNumbers, 0);
   };
 
   return (
