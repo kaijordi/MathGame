@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Minus } from 'lucide-react';
+import { Minus, Delete } from 'lucide-react';
 
 function App() {
   const [num1, setNum1] = useState(0);
@@ -9,8 +9,8 @@ function App() {
   const [feedback, setFeedback] = useState('');
 
   const generateNumbers = () => {
-    const firstNum = Math.floor(Math.random() * 90) + 10;
-    const secondNum = Math.floor(Math.random() * (firstNum - 10 + 1)) + 10;
+    let firstNum = Math.floor(Math.random() * 90) + 10;
+    let secondNum = Math.floor(Math.random() * (firstNum - 10 + 1)) + 10;
     setNum1(firstNum);
     setNum2(secondNum);
     setUserAnswer('');
@@ -21,8 +21,17 @@ function App() {
     generateNumbers();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleNumberClick = (num: number) => {
+    if (userAnswer.length < 3) {
+      setUserAnswer(prevAnswer => prevAnswer + num);
+    }
+  };
+
+  const handleDelete = () => {
+    setUserAnswer(prevAnswer => prevAnswer.slice(0, -1));
+  };
+
+  const handleSubmit = () => {
     const correctAnswer = num1 - num2;
     if (parseInt(userAnswer) === correctAnswer) {
       setScore(score + 1);
@@ -42,24 +51,46 @@ function App() {
           <Minus className="mx-2" size={24} />
           <span className="text-4xl font-bold">{num2}</span>
         </div>
-        <form onSubmit={handleSubmit} className="mb-4">
+        <div className="mb-4">
           <input
-            type="number"
+            type="text"
             value={userAnswer}
-            onChange={(e) => setUserAnswer(e.target.value)}
-            className="w-full p-2 border rounded"
-            placeholder="Enter your answer"
-            required
+            readOnly
+            className="w-full p-2 border rounded text-center text-2xl"
+            placeholder="Your answer"
           />
+        </div>
+        <div className="grid grid-cols-3 gap-2 mb-4">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+            <button
+              key={num}
+              onClick={() => handleNumberClick(num)}
+              className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-2 px-4 rounded"
+            >
+              {num}
+            </button>
+          ))}
           <button
-            type="submit"
-            className="w-full mt-2 bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            onClick={() => handleNumberClick(0)}
+            className="bg-blue-100 hover:bg-blue-200 text-blue-800 font-bold py-2 px-4 rounded col-span-2"
           >
-            Submit
+            0
           </button>
-        </form>
+          <button
+            onClick={handleDelete}
+            className="bg-red-100 hover:bg-red-200 text-red-800 font-bold py-2 px-4 rounded"
+          >
+            <Delete size={20} />
+          </button>
+        </div>
+        <button
+          onClick={handleSubmit}
+          className="w-full mt-2 bg-green-500 text-white p-2 rounded hover:bg-green-600"
+        >
+          Submit
+        </button>
         {feedback && (
-          <p className={`text-center ${feedback.includes('Correct') ? 'text-green-600' : 'text-red-600'}`}>
+          <p className={`text-center mt-4 ${feedback.includes('Correct') ? 'text-green-600' : 'text-red-600'}`}>
             {feedback}
           </p>
         )}
